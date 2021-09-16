@@ -1,0 +1,38 @@
+version: '3.6'
+
+services:
+  consul-1: 
+    image: consul:latest
+    container_name: consul-1
+    restart: always
+    network_mode: docker-network-app
+    command: agent -server -client=0.0.0.0 -bootstrap-expect=3 -node=consul-1 -datacenter=dc1
+    #volumes:
+    #    - /home/app/consul/conf/acl.json:/home/acl.json
+  consul-2:
+    image: consul:latest
+    container_name: consul-2
+    network_mode: docker-network-app
+    restart: always
+    command: agent -server -client=0.0.0.0 -retry-join=consul-1 -node=consul-2 -datacenter=dc1
+    #volumes:
+    #    - /home/app/consul/conf/acl.json:/home/acl.json
+  consul-3:
+    image: consul:latest
+    container_name: consul-3
+    network_mode: docker-network-app
+    restart: always
+    command: agent -server -client=0.0.0.0 -retry-join=consul-1 -node=consul-3 -datacenter=dc1
+    #volumes:
+    #    - /home/app/consul/conf/acl.json:/home/acl.json
+  consul-client:
+    image: consul:latest
+    container_name: consul-client
+    network_mode: docker-network-app
+    restart: always
+    ports:
+      - 8600:8500
+    command: agent -client=0.0.0.0 -retry-join=consul-1 -ui -node=client-1 -datacenter=dc1
+    #volumes:
+    #  - /home/app/consul/conf/acl_client.json:/home/acl_client.json
+
